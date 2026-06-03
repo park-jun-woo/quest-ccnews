@@ -7,7 +7,9 @@ session.json
 *.session.json
 *.bak
 
-# 내보내기 결과
+# 내보내기 결과 (JSONL 증분 출력 + 레거시 형식)
+ccnews-results.jsonl
+*.jsonl
 *.result.xlsx
 *.result.csv
 collected.xlsx
@@ -17,6 +19,10 @@ out.csv
 
 # tsma 테스트 래칫 세션
 .tsma/
+
+# 다운로드한 WARC 캐시 (TODO 기사 남은 동안만 보존)
+/warc-cache/
+*.warc.gz
 
 # 임시
 _tmp_*

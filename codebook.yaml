@@ -1,0 +1,20 @@
+required:
+  feature:
+    cli: "CLI command entrypoint and root orchestration"
+    session: "runtime state machine persistence (session.json)"
+    ingestion: "two-track CC-NEWS WARC ingestion cursor"
+    host: "per-host cache: robots state, media info, CC license"
+    robots: "robots.txt gate: RFC 9309 parse/evaluate (pure) + one-time fetch (IO)"
+    article: "article quest work-list and its state machine"
+    extract: "Phase005 deterministic article-field extraction (JSON-LD/OG) + trust gate"
+    event6: "six-element (육하원칙) extraction with fact anchors"
+    anchor: "Phase006 deterministic fact-anchor gate: event6 anchors as source substrings → PASS/REVIEW/FAIL"
+    output: "Phase007 terminal-state article → JSONL record rendering (pure) + emit-once file append (IO)"
+  type:
+    command: "cobra command entrypoint"
+    model: "data type definition"
+    helper: "internal utility function"
+
+optional:
+  level:
+    error: "error-path handling"

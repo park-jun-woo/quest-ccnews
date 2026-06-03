@@ -1,3 +1,6 @@
+//ff:func feature=cli type=command control=sequence
+//ff:what 루트 cobra 명령을 실행하고, 에러 시 종료코드 1로 끝낸다. 모든 하위 명령의 부모.
+
 package cmd
 
 import (
