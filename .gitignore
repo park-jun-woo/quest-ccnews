@@ -1,0 +1,22 @@
+# 빌드 산출물
+/ccnews
+ccnews.exe
+
+# 세션 (런타임 상태: robots 캐시 + 추출 템플릿 레지스트리 + 퀘스트 진행)
+session.json
+*.session.json
+*.bak
+
+# 내보내기 결과
+*.result.xlsx
+*.result.csv
+collected.xlsx
+skipped.xlsx
+out.xlsx
+out.csv
+
+# tsma 테스트 래칫 세션
+.tsma/
+
+# 임시
+_tmp_*
