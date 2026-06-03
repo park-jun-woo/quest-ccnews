@@ -29,4 +29,21 @@ func TestJSONLDScripts(t *testing.T) {
 			t.Fatalf("want nil, got %v", got)
 		}
 	})
+	t.Run("empty input parses to nil", func(t *testing.T) {
+		// html.Parse never errors on a byte slice (the tokenizer is lenient),
+		// so the err!=nil branch is unreachable; empty input still parses to a
+		// document with no ld+json blocks and yields nil.
+		if got := jsonLDScripts(nil); got != nil {
+			t.Fatalf("want nil for empty input, got %v", got)
+		}
+	})
+	t.Run("ld block in body, not just head", func(t *testing.T) {
+		in := []byte(`<html><body>` +
+			`<script type="application/ld+json">{"c":3}</script>` +
+			`</body></html>`)
+		got := jsonLDScripts(in)
+		if len(got) != 1 || !strings.Contains(got[0], `"c":3`) {
+			t.Fatalf("want one body-level ld block, got %v", got)
+		}
+	})
 }

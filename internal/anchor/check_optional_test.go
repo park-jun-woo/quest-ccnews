@@ -1,5 +1,5 @@
 //ff:func feature=anchor type=helper control=sequence
-//ff:what checkOptional이 nil 무시, 앵커 환각=FAIL Result, 앵커 0개=(nil,true) REVIEW 후보, 전부 substring=(nil,false)를 반환하는지 분기별로 검증한다.
+//ff:what checkOptional이 nil 무시, 플레이스홀더/짧은 value=FAIL, 앵커 환각=FAIL Result, 유효앵커 0개=(nil,true) REVIEW 후보, 전부 substring=(nil,false)를 반환하는지 분기별로 검증한다.
 
 package anchor
 
@@ -24,7 +24,7 @@ func TestCheckOptional(t *testing.T) {
 	})
 
 	t.Run("hallucinated anchor is FAIL", func(t *testing.T) {
-		f := &session.Field{Value: "x", Anchors: []string{"lazy dog"}}
+		f := &session.Field{Value: "xx", Anchors: []string{"lazy dog"}}
 		res, unanchored := checkOptional(namedField{name: "where", f: f}, norm)
 		if res == nil || res.Verdict != FAIL {
 			t.Fatalf("res = %+v, want FAIL", res)
@@ -38,7 +38,7 @@ func TestCheckOptional(t *testing.T) {
 	})
 
 	t.Run("no anchors is REVIEW candidate", func(t *testing.T) {
-		f := &session.Field{Value: "x"} // no anchors
+		f := &session.Field{Value: "xx"} // no anchors
 		res, unanchored := checkOptional(namedField{name: "why", f: f}, norm)
 		if res != nil {
 			t.Errorf("res = %+v, want nil", res)
@@ -49,7 +49,7 @@ func TestCheckOptional(t *testing.T) {
 	})
 
 	t.Run("all anchors present passes", func(t *testing.T) {
-		f := &session.Field{Value: "x", Anchors: []string{"quick", "fox jumps"}}
+		f := &session.Field{Value: "xx", Anchors: []string{"quick", "fox jumps"}}
 		res, unanchored := checkOptional(namedField{name: "how", f: f}, norm)
 		if res != nil {
 			t.Errorf("res = %+v, want nil", res)

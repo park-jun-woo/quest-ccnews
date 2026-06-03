@@ -1,5 +1,5 @@
 //ff:func feature=anchor type=helper control=sequence
-//ff:what 필수 필드의 Value가 비면 FAIL이고 Reason이 "값 없음"을 언급하는지 검증한다.
+//ff:what 필수 필드의 Value가 비면 FAIL이고 Reason이 "플레이스홀더/공허함"을 언급하는지 검증한다.
 
 package anchor
 
@@ -20,7 +20,7 @@ func TestGate_RequiredEmptyValueFail(t *testing.T) {
 	if res.Verdict != FAIL {
 		t.Fatalf("Verdict = %s, want FAIL", res.Verdict)
 	}
-	if !strings.Contains(res.Reason, "값 없음") {
-		t.Errorf("Reason %q should mention empty value", res.Reason)
+	if !strings.Contains(res.Reason, "플레이스홀더/공허함") {
+		t.Errorf("Reason %q should mention hollow/placeholder value", res.Reason)
 	}
 }

@@ -29,4 +29,12 @@ func TestExtractMeta(t *testing.T) {
 			t.Fatalf("expected ok=false without og:title")
 		}
 	})
+	t.Run("empty input -> ok false", func(t *testing.T) {
+		// html.Parse never errors on a byte slice, so the err!=nil branch is
+		// unreachable; empty input yields no meta and ok=false.
+		f, ok := extractMeta(nil)
+		if ok || f != (Fields{}) {
+			t.Fatalf("want empty Fields, ok=false; got %+v ok=%v", f, ok)
+		}
+	})
 }

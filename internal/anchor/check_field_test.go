@@ -1,5 +1,5 @@
 //ff:func feature=anchor type=helper control=sequence
-//ff:what checkField가 앵커 0개=unanchored, 전부 substring=anchored, 누락=hallucination(원문형 반환), 정규화 후 매칭, Field.Anchored 채움을 검증한다.
+//ff:what checkField가 유효앵커 0개=unanchored, 전부 substring=anchored, 누락=hallucination(원문형 반환), 정규화 후 매칭, Field.Anchored 채움을 검증한다.
 
 package anchor
 

@@ -1,5 +1,5 @@
 //ff:func feature=anchor type=helper control=sequence
-//ff:what checkRequired가 nil/빈 값=FAIL(값 없음), 앵커 환각=FAIL(환각), 앵커 0개=FAIL(검증 불가), 전부 substring=nil(통과)을 반환하는지 분기별로 검증한다.
+//ff:what checkRequired가 nil=FAIL(값 없음), 빈/플레이스홀더 값=FAIL(플레이스홀더/공허함), 앵커 환각=FAIL(환각), 유효앵커 0개=FAIL(검증 불가), 전부 substring=nil(통과)을 반환하는지 분기별로 검증한다.
 
 package anchor
 
@@ -20,11 +20,11 @@ func TestCheckRequired(t *testing.T) {
 		}
 	})
 
-	t.Run("empty value is FAIL", func(t *testing.T) {
+	t.Run("empty value is FAIL (플레이스홀더/공허함)", func(t *testing.T) {
 		f := &session.Field{Value: "", Anchors: []string{"quick"}}
 		res := checkRequired(namedField{name: "who", f: f}, norm)
-		if res == nil || res.Verdict != FAIL || !strings.Contains(res.Reason, "값 없음") {
-			t.Fatalf("res = %+v, want FAIL(값 없음)", res)
+		if res == nil || res.Verdict != FAIL || !strings.Contains(res.Reason, "플레이스홀더/공허함") {
+			t.Fatalf("res = %+v, want FAIL(플레이스홀더/공허함)", res)
 		}
 	})
 

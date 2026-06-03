@@ -10,6 +10,7 @@ type Field struct {
 	Anchored bool     `json:"anchored"`
 
 	// Interpretive is a display label only — NOT a gate input. REVIEW is decided
-	// by the machine from len(Anchors)==0, never from this flag (Phase006).
+	// by the machine from zero valid (non-empty/non-whitespace) anchors, never
+	// from this flag (Phase006, hardened by Phase009 L0).
 	Interpretive bool `json:"interpretive,omitempty"`
 }

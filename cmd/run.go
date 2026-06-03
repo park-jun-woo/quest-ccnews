@@ -1,5 +1,5 @@
 //ff:func feature=cli type=command control=sequence level=error
-//ff:what `ccnews run [--track]` 명령. 세션을 로드(없으면 생성)하고 투트랙 인제스천 루프를 돌려 WARC를 받아 기사를 채운다.
+//ff:what `ccnews run [--track]` 명령. 세션을 로드(없으면 생성)하고 투트랙 인제스천 루프(ingestRun seam)를 돌려 WARC를 받아 기사를 채운 뒤 종단 기사를 out으로 sweep한다.
 
 package cmd
 
@@ -27,6 +27,11 @@ var (
 	runCacheDir string
 	runOut      string
 )
+
+// ingestRun is the ingestion loop, indirected through a package var so tests can
+// substitute a no-network stub. Defaults to the real ingest.Run; behavior is
+// identical in production.
+var ingestRun = ingest.Run
 
 var runCmd = &cobra.Command{
 	Use:   "run",
@@ -58,7 +63,7 @@ func runIngestion(cmd *cobra.Command, _ []string) error {
 		MaxWarcs: runMaxWarcs,
 		Save:     func() error { return s.Save(sessionPath) },
 	}
-	if err := ingest.Run(client, s, opt, cmd.OutOrStdout()); err != nil {
+	if err := ingestRun(client, s, opt, cmd.OutOrStdout()); err != nil {
 		return err
 	}
 
