@@ -6,6 +6,7 @@ require (
 	github.com/slyrz/warc v0.0.0-20150806225202-a50edd19b690
 	github.com/spf13/cobra v1.8.1
 	golang.org/x/net v0.27.0
+	golang.org/x/text v0.16.0
 )
 
 require (

@@ -57,14 +57,21 @@ func (c *Client) ReadBody(loc *session.WARCLoc) ([]byte, error) {
 }
 
 // httpResponseBody parses a WARC response record's content (a raw HTTP response:
-// status line + headers + body) and returns the body bytes. CC-NEWS response
-// records wrap the origin's HTTP response, so the HTML payload follows the HTTP
-// header block.
+// status line + headers + body) and returns the body decoded to UTF-8. CC-NEWS
+// response records wrap the origin's HTTP response, so the HTML payload follows
+// the HTTP header block. The Content-Type header is read here and handed (with
+// the raw body) to ToUTF8 so legacy-encoded pages (Shift-JIS·EUC-KR·GB2312 등)
+// are normalized to UTF-8 at this single ingest point (Phase008).
 func httpResponseBody(content io.Reader) ([]byte, error) {
 	resp, err := http.ReadResponse(bufio.NewReader(content), nil)
 	if err != nil {
 		return nil, fmt.Errorf("parse WARC HTTP response: %w", err)
 	}
 	defer resp.Body.Close()
-	return io.ReadAll(resp.Body)
+	raw, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	utf8Body, _ := ToUTF8(raw, resp.Header.Get("Content-Type"))
+	return utf8Body, nil
 }
