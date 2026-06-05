@@ -10,10 +10,12 @@ required:
     event6: "six-element (육하원칙) extraction with fact anchors"
     anchor: "Phase006 deterministic fact-anchor gate: event6 anchors as source substrings → PASS/REVIEW/FAIL"
     output: "Phase007 terminal-state article → JSONL record rendering (pure) + emit-once file append (IO)"
+    gate: "Phase012 reins gate.Definition adoption (ccnewsquest): anchor rules ported to reins gate.Rule + textmatch, verdict via gate.Evaluate level aggregation"
   type:
     command: "cobra command entrypoint"
     model: "data type definition"
     helper: "internal utility function"
+    rule: "gate violation detector (gate.Rule) in the catalog"
 
 optional:
   level:
