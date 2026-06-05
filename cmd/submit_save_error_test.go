@@ -15,7 +15,10 @@ import (
 
 func TestRunSubmit_SaveError(t *testing.T) {
 	resetSubmitFlags(t)
-	cache, file := writeCacheWarc(t, "<html><body>Alice met Bob in Paris on Monday to sign the treaty</body></html>")
+	cache, file := writeCacheWarc(t, submitStructuredHTML(
+		"Alice met Bob in Paris on Monday to sign the treaty. "+
+			"The two leaders shook hands before the cameras and pledged to deepen cooperation "+
+			"across trade, security and climate over the coming year, aides said afterward."))
 	// Place the session file inside a directory we make read-only so the
 	// post-verdict Save() (submit.go:73) fails on write.
 	roDir := t.TempDir()

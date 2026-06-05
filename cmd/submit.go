@@ -1,5 +1,5 @@
 //ff:func feature=cli type=command control=sequence level=error
-//ff:what `ccnews submit --url --event6` 명령. 제출된 event6를 대상 기사 원문에 앵커 게이트로 검증해 PASS/REVIEW면 잠금, FAIL이면 tries++(MaxTries 초과 시 DONE)하고 세션을 저장한다.
+//ff:what `ccnews submit --url --event6` 명령. extract.Apply 신뢰 게이트로 구조화 데이터를 채우고(없으면 SKIPPED 단락), 통과 시 event6를 원문에 앵커 게이트로 검증해 PASS/REVIEW면 잠금, FAIL이면 tries++(MaxTries 초과 시 DONE)한 뒤 세션을 저장한다.
 
 package cmd
 
@@ -10,7 +10,6 @@ import (
 	"github.com/park-jun-woo/quest-ccnews/internal/anchor"
 	"github.com/park-jun-woo/quest-ccnews/internal/extract"
 	"github.com/park-jun-woo/quest-ccnews/internal/ingest"
-	"github.com/park-jun-woo/quest-ccnews/internal/output"
 	"github.com/park-jun-woo/quest-ccnews/internal/session"
 	"github.com/spf13/cobra"
 )
@@ -28,9 +27,10 @@ var submitCmd = &cobra.Command{
 	Long: `--url 로 지정한 기사에 대해 에이전트가 만든 event6(JSON: --event6 <file> 또는 -=stdin)를
 받아, 그 기사 원문을 WARC에서 재독해 앵커 게이트로 검증한다.
 
-  PASS   필수·선택 앵커 전부 원문 substring → state=PASS(잠금)
-  REVIEW 필수는 PASS, 선택필드 앵커 0개 존재     → state=REVIEW(잠금)
-  FAIL   필수 누락 또는 앵커 환각              → tries++ → TODO 유지(MaxTries 초과 시 DONE)`,
+  PASS    필수·선택 앵커 전부 원문 substring → state=PASS(잠금)
+  REVIEW  필수는 PASS, 선택필드 앵커 0개 존재    → state=REVIEW(잠금)
+  FAIL    필수 누락 또는 앵커 환각             → tries++ → TODO 유지(MaxTries 초과 시 DONE)
+  SKIPPED 구조화 데이터 없음(신뢰 게이트 탈락)  → state=SKIPPED(잠금, 앵커 게이트 미실행)`,
 	RunE: runSubmit,
 }
 
@@ -67,25 +67,28 @@ func runSubmit(cmd *cobra.Command, _ []string) error {
 	if err != nil {
 		return fmt.Errorf("원문 재독 실패 (%s): %w", a.URL, err)
 	}
-	res := extract.Parse(htmlBytes)
 
-	verdict := anchor.Gate(ev, res.BodyText)
-	anchor.Apply(a, ev, verdict, time.Now().UTC().Format(time.RFC3339))
-
-	if err := s.Save(sessionPath); err != nil {
-		return err
-	}
-
-	// Sweep terminal, not-yet-emitted articles (uniform across all terminal
-	// states) to the JSONL output, then persist the Emitted flags.
-	n, err := output.Sweep(s, submitOut)
-	if err != nil {
-		return err
-	}
-	if n > 0 {
-		if err := s.Save(sessionPath); err != nil {
+	// extract.Apply fills a.Extracted (incl. PublishedAt from structured data) and
+	// returns the anchor-target body text on a trusted article. If the trust gate
+	// fails it locks a.State=SKIPPED with a SkipReason and returns ok=false. Since
+	// a is guaranteed TODO above, ok==false here means the article was just SKIPPED.
+	bodyText, ok := extract.Apply(a, htmlBytes)
+	if !ok {
+		// SKIPPED short-circuit: the article is now terminal (untrusted, no
+		// structured data) — do NOT run the anchor gate. Persist the lock, sweep the
+		// audit record to --out, and report the skip.
+		if err := saveAndSweep(s); err != nil {
 			return err
 		}
+		printSubmitSkipped(cmd.OutOrStdout(), a)
+		return nil
+	}
+
+	verdict := anchor.Gate(ev, bodyText)
+	anchor.Apply(a, ev, verdict, time.Now().UTC().Format(time.RFC3339))
+
+	if err := saveAndSweep(s); err != nil {
+		return err
 	}
 
 	printSubmit(cmd.OutOrStdout(), a, verdict)

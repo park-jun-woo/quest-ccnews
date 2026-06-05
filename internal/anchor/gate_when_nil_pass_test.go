@@ -1,5 +1,5 @@
 //ff:func feature=anchor type=helper control=sequence
-//ff:what 필수 who/what + 선택 when만 있고 앵커가 전부 원문 substring이면 PASS이고 세 필드 Anchored가 채워지는지 검증한다.
+//ff:what when이 nil이어도 필수 who/what이 위생적 value+유효앵커면 PASS인지 검증한다(Phase010: when 선택화 → 생략 가능).
 
 package anchor
 
@@ -9,17 +9,17 @@ import (
 	"github.com/park-jun-woo/quest-ccnews/internal/session"
 )
 
-func TestGate_RequiredOnlyPass(t *testing.T) {
+func TestGate_WhenNilPass(t *testing.T) {
 	ev := &session.Event6{
 		Who:  fld("Alice", "Alice"),
-		When: fld("Monday", "Monday"),
 		What: fld("signed treaty", "sign the treaty"),
+		// When omitted: now optional (Phase010), so nil must not FAIL.
 	}
 	res := Gate(ev, gateSource)
 	if res.Verdict != PASS {
 		t.Fatalf("Verdict = %s (%s), want PASS", res.Verdict, res.Reason)
 	}
-	if !ev.Who.Anchored || !ev.When.Anchored || !ev.What.Anchored {
-		t.Error("required fields should be marked Anchored")
+	if !ev.Who.Anchored || !ev.What.Anchored {
+		t.Error("required who/what should be marked Anchored")
 	}
 }

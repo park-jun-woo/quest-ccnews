@@ -1,5 +1,5 @@
 //ff:func feature=anchor type=helper control=selection
-//ff:what 필수 필드(who/when/what) 하나를 검사한다. nil이면 FAIL(값 없음), value가 무효(빈·짧음·플레이스홀더)면 FAIL, 앵커가 환각이거나 유효앵커 0개면 FAIL. 통과하면 nil. 게이트의 필수 루프 본문을 동작보존 추출한 것(순수, Field.Anchored 채움).
+//ff:what 필수 필드(who/what) 하나를 검사한다. nil이면 FAIL(값 없음), value가 무효(빈·짧음·플레이스홀더)면 FAIL, 앵커가 환각이거나 유효앵커 0개면 FAIL. 통과하면 nil. 게이트의 필수 루프 본문을 동작보존 추출한 것(순수, Field.Anchored 채움).
 
 package anchor
 

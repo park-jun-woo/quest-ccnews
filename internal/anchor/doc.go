@@ -28,11 +28,11 @@
 //
 // Verdict (machine-only, no opinion):
 //
-//   - PASS:   required who/when/what each have a hygienic value, ≥1 valid anchor,
+//   - PASS:   required who/what each have a hygienic value, ≥1 valid anchor,
 //     and every valid anchor a source substring; present optional fields
-//     (where/how/why) likewise have a hygienic value and every valid anchor a
+//     (when/where/how/why) likewise have a hygienic value and every valid anchor a
 //     source substring.
-//   - REVIEW: required three PASS, but some present optional field has zero valid
+//   - REVIEW: required two PASS, but some present optional field has zero valid
 //     anchors (a value with zero verifiable fact tokens — structurally
 //     unverifiable, so flagged for human review).
 //   - FAIL:   a required field is missing, any present field's value fails the

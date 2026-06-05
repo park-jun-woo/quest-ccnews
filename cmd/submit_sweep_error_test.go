@@ -18,7 +18,10 @@ import (
 // surface that sweep error.
 func TestRunSubmit_SweepError(t *testing.T) {
 	resetSubmitFlags(t)
-	cache, file := writeCacheWarc(t, "<html><body>Alice met Bob in Paris on Monday to sign the treaty</body></html>")
+	cache, file := writeCacheWarc(t, submitStructuredHTML(
+		"Alice met Bob in Paris on Monday to sign the treaty. "+
+			"The two leaders shook hands before the cameras and pledged to deepen cooperation "+
+			"across trade, security and climate over the coming year, aides said afterward."))
 	p := writeSessionWith(t, file)
 	evPath := writeEvent6File(t, `{
 		"who":{"value":"Alice","anchors":["Alice"]},

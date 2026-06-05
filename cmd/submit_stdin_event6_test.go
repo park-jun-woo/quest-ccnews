@@ -13,7 +13,10 @@ import (
 
 func TestRunSubmit_StdinEvent6(t *testing.T) {
 	resetSubmitFlags(t)
-	cache, file := writeCacheWarc(t, "<html><body>Alice met Bob in Paris on Monday to sign the treaty</body></html>")
+	cache, file := writeCacheWarc(t, submitStructuredHTML(
+		"Alice met Bob in Paris on Monday to sign the treaty. "+
+			"The two leaders shook hands before the cameras and pledged to deepen cooperation "+
+			"across trade, security and climate over the coming year, aides said afterward."))
 	p := writeSessionWith(t, file)
 	submitURL = "https://example.com/a"
 	submitEvent6 = "-"

@@ -1,5 +1,5 @@
 //ff:func feature=cli type=helper control=sequence
-//ff:what next 출력 포매터. 기사 메타·원문 앵커대상 본문·event6 작성 규칙(value=영어, anchors=원문 표면형, 필수 who/when/what)·submit 사용법을 사람/에이전트가 읽을 수 있게 찍는다.
+//ff:what next 출력 포매터. 기사 메타·원문 앵커대상 본문·event6 작성 규칙(value=영어, anchors=원문 표면형, 필수 who/what)·submit 사용법을 사람/에이전트가 읽을 수 있게 찍는다.
 
 package cmd
 
@@ -32,8 +32,8 @@ func printNext(w io.Writer, a *session.Article, bodyText string) {
 	fmt.Fprintln(w, "위 본문에서 육하원칙(event6)을 만들어 제출하세요.")
 	fmt.Fprintln(w, "  - value  : 영어로 산출 (날짜는 ISO, 숫자는 정규화)")
 	fmt.Fprintln(w, "  - anchors: 원문에 글자 그대로 나타난 표면형 토큰들 (인명·날짜·숫자·지명)")
-	fmt.Fprintln(w, "  - 필수: who·when·what (값+앵커 필수, 비우면 FAIL)")
-	fmt.Fprintln(w, "  - 선택: where·how·why (있으면 앵커, 앵커 0개면 REVIEW)")
+	fmt.Fprintln(w, "  - 필수: who·what (값+앵커 필수, 비우면 FAIL)")
+	fmt.Fprintln(w, "  - 선택: when·where·how·why (있으면 앵커, 앵커 0개면 REVIEW)")
 	fmt.Fprintln(w, "  - 게이트는 anchors가 원문 substring인지만 본다. value는 검증 대상 아님.")
 	fmt.Fprintln(w, "  - 앵커가 하나라도 원문에 없으면 FAIL(환각). tries 소진 시 DONE.")
 	fmt.Fprintln(w)

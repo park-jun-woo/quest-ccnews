@@ -1,5 +1,5 @@
 //ff:func feature=anchor type=helper control=iteration dimension=1 level=error
-//ff:what event6 1회 제출을 원문 본문에 대조해 PASS/REVIEW/FAIL을 판정하는 순수 게이트. 필수(who/when/what)는 위생적 value+유효앵커 전부 substring, 선택(where/how/why)은 present 시 위생적 value+유효앵커 substring. 플레이스홀더 value 또는 환각=FAIL, present 선택필드 유효앵커0개=REVIEW. Field.Anchored를 채운다.
+//ff:what event6 1회 제출을 원문 본문에 대조해 PASS/REVIEW/FAIL을 판정하는 순수 게이트. 필수(who/what)는 위생적 value+유효앵커 전부 substring, 선택(when/where/how/why)은 present 시 위생적 value+유효앵커 substring. 플레이스홀더 value 또는 환각=FAIL, present 선택필드 유효앵커0개=REVIEW. Field.Anchored를 채운다.
 
 package anchor
 
@@ -14,12 +14,12 @@ import (
 // (ev, source): the only mutation is filling each present Field.Anchored with
 // its per-field machine verdict. No IO.
 //
-// Required who/when/what must each be present with a hygienic Value (Phase009 L3:
+// Required who/what must each be present with a hygienic Value (Phase009 L3:
 // non-empty, ≥2 runes, not a placeholder), ≥1 valid anchor, and every valid anchor
 // a source substring. A missing required field (nil), a placeholder/empty Value,
 // zero valid anchors, or any hallucinated anchor in any field is FAIL. A present
-// optional field (where/how/why) with zero valid anchors is structurally
-// unverifiable → REVIEW (only when the required three otherwise PASS). A "valid"
+// optional field (when/where/how/why) with zero valid anchors is structurally
+// unverifiable → REVIEW (only when the required two otherwise PASS). A "valid"
 // anchor is one whose normalized form is non-empty (Phase009 L0).
 //
 // Per-field checking is delegated to checkRequired/checkOptional so this gate
@@ -31,10 +31,10 @@ func Gate(ev *session.Event6, source string) Result {
 	normSource := normalize(source)
 
 	required := []namedField{
-		{"who", ev.Who}, {"when", ev.When}, {"what", ev.What},
+		{"who", ev.Who}, {"what", ev.What},
 	}
 	optional := []namedField{
-		{"where", ev.Where}, {"how", ev.How}, {"why", ev.Why},
+		{"when", ev.When}, {"where", ev.Where}, {"how", ev.How}, {"why", ev.Why},
 	}
 
 	// Required fields: a placeholder/empty value or zero valid anchors is FAIL

@@ -1,5 +1,5 @@
 //ff:func feature=cli type=helper control=sequence
-//ff:what submit 결과 포매터. 게이트 판정(PASS/REVIEW/FAIL)·사유·전이 후 기사 상태/시도수를 찍는다. FAIL이면 재시도/DONE 안내.
+//ff:what submit 결과 포매터. 게이트 판정(PASS/REVIEW/FAIL)·사유·전이 후 기사 상태/시도수를 찍는다. FAIL이면 재시도/DONE 안내. (SKIPPED는 printSubmitSkipped 별도 파일에서 안내.)
 
 package cmd
 
