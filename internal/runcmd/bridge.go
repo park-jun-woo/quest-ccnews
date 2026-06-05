@@ -33,8 +33,14 @@ func bridge(scratch *session.Session, s *quest.Session, guard *robotsGuard, now 
 		}
 		seen[a.URL] = true
 
-		it := &quest.Item{Key: a.URL, State: quest.TODO, Payload: a}
+		it := &quest.Item{Key: a.URL, State: quest.TODO}
 		blockArticle(it, a, guard, now)
+		// SetPayload is a snapshot, so it must run after blockArticle mutates
+		// a.State/a.SkipReason — otherwise the deny reason is lost from the
+		// persisted payload (and from export).
+		if err := it.SetPayload(a); err != nil {
+			return seeded
+		}
 		s.Items = append(s.Items, it)
 		seeded++
 	}

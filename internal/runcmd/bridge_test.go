@@ -34,8 +34,12 @@ func TestBridge(t *testing.T) {
 		if it.State != quest.TODO {
 			t.Errorf("State = %q, want TODO", it.State)
 		}
-		if it.Payload != a {
-			t.Errorf("Payload = %v, want the article pointer", it.Payload)
+		var got session.Article
+		if err := it.DecodePayload(&got); err != nil {
+			t.Fatalf("DecodePayload: %v", err)
+		}
+		if got.URL != a.URL || got.Host != a.Host {
+			t.Errorf("payload = %+v, want article %+v", got, *a)
 		}
 		// scratch.Articles truncated after fold.
 		if len(scratch.Articles) != 0 {

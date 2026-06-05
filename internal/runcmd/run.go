@@ -31,7 +31,13 @@ func (o *options) run(cmd *cobra.Command, _ []string) error {
 	if err != nil {
 		return err
 	}
-	guard := newRobotsGuard(scratch.UserAgent, scratch.Hosts)
+	// guard is nil when --robots=false so bridge seeds every article TODO without
+	// the eager per-host robots.txt fetch (a 1892-host live-fetch storm on a single
+	// CC-NEWS WARC, which otherwise stalls the per-WARC bridge for tens of minutes).
+	var guard *robotsGuard
+	if o.robots {
+		guard = newRobotsGuard(scratch.UserAgent, scratch.Hosts)
+	}
 	now := time.Now().UTC().Format(time.RFC3339)
 	w := cmd.OutOrStdout()
 

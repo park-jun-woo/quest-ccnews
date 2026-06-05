@@ -21,7 +21,8 @@ func TestSeed(t *testing.T) {
 	if items[0].Key != "https://x/a" || items[0].State != quest.TODO {
 		t.Fatalf("item0 = %+v", items[0])
 	}
-	if a, ok := items[0].Payload.(*session.Article); !ok || a.URL != "https://x/a" {
-		t.Fatalf("item0 payload = %v", items[0].Payload)
+	var a session.Article
+	if err := items[0].DecodePayload(&a); err != nil || a.URL != "https://x/a" {
+		t.Fatalf("item0 payload = %q (err %v)", string(items[0].Payload), err)
 	}
 }

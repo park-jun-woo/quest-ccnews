@@ -12,6 +12,7 @@ type options struct {
 	cacheDir  string
 	track     string
 	maxWarcs  int
+	robots    bool           // when false, skip the eager per-host robots.txt fetch in bridge
 	cmd       *cobra.Command // set in New so sessionPath() can read the inherited flag
 }
 
@@ -48,5 +49,6 @@ robots 거부 기사는 BLOCKED로 직접 시드한다.`,
 	cmd.Flags().StringVar(&o.track, "track", "both", "처리할 트랙: forward|backward|both")
 	cmd.Flags().IntVar(&o.maxWarcs, "max-warcs", 0, "처리할 WARC 최대 개수(0=무제한)")
 	cmd.Flags().StringVar(&o.cacheDir, "cache-dir", cacheDir, "다운로드 WARC 캐시 디렉터리")
+	cmd.Flags().BoolVar(&o.robots, "robots", true, "브리지 시 호스트별 robots.txt를 1회 fetch해 거부 기사를 BLOCKED로 시드(false면 생략하고 모두 TODO 시드 — 대량 인제스천 시 1892개 호스트 라이브 fetch 폭주 회피)")
 	return cmd
 }

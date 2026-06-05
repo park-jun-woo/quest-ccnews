@@ -13,7 +13,10 @@ import (
 
 func TestRenderEmptyHostLang(t *testing.T) {
 	// Empty host and lang: those lines must be omitted, URL/submit still present.
-	it := &quest.Item{Key: "https://x/a", Payload: &session.Article{URL: "https://x/a"}}
+	it := &quest.Item{Key: "https://x/a"}
+	if err := it.SetPayload(&session.Article{URL: "https://x/a"}); err != nil {
+		t.Fatal(err)
+	}
 	out, err := Def("ua", "cache").Render(it)
 	if err != nil {
 		t.Fatal(err)

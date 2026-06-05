@@ -23,7 +23,8 @@ func (ccnewsDef) Render(it *quest.Item) (string, error) {
 
 	url := it.Key
 	host, lang := "", ""
-	if a, ok := it.Payload.(*session.Article); ok && a != nil {
+	var a session.Article
+	if err := it.DecodePayload(&a); err == nil {
 		host, lang = a.Host, a.Lang
 	}
 

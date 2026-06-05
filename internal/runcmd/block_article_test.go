@@ -16,7 +16,7 @@ func TestBlockArticle(t *testing.T) {
 
 	t.Run("nil guard leaves the item untouched", func(t *testing.T) {
 		a := &session.Article{URL: "https://ex.com/a", Host: "ex.com"}
-		it := &quest.Item{Key: a.URL, State: quest.TODO, Payload: a}
+		it := &quest.Item{Key: a.URL, State: quest.TODO}
 		blockArticle(it, a, nil, now)
 		if it.State != quest.TODO || a.State == session.BLOCKED {
 			t.Errorf("State = %q / payload %q, want TODO untouched", it.State, a.State)
@@ -25,7 +25,7 @@ func TestBlockArticle(t *testing.T) {
 
 	t.Run("empty host skips the guard", func(t *testing.T) {
 		a := &session.Article{URL: "https://deny.com/x", Host: ""}
-		it := &quest.Item{Key: a.URL, State: quest.TODO, Payload: a}
+		it := &quest.Item{Key: a.URL, State: quest.TODO}
 		blockArticle(it, a, guardDenyingHost("deny.com"), now)
 		if it.State != quest.TODO {
 			t.Errorf("State = %q, want TODO (host empty → guard skipped)", it.State)
@@ -34,7 +34,7 @@ func TestBlockArticle(t *testing.T) {
 
 	t.Run("allowed host leaves the item TODO", func(t *testing.T) {
 		a := &session.Article{URL: "https://ex.com/ok", Host: "ex.com"}
-		it := &quest.Item{Key: a.URL, State: quest.TODO, Payload: a}
+		it := &quest.Item{Key: a.URL, State: quest.TODO}
 		// Empty ruleset → default-allow, purely from cache (no network).
 		blockArticle(it, a, cachedGuard("ex.com", &robots.Ruleset{}), now)
 		if it.State != quest.TODO || a.SkipReason != "" {
@@ -44,7 +44,7 @@ func TestBlockArticle(t *testing.T) {
 
 	t.Run("denied host seeds the item BLOCKED with the reason stamped", func(t *testing.T) {
 		a := &session.Article{URL: "https://deny.com/x", Host: "deny.com"}
-		it := &quest.Item{Key: a.URL, State: quest.TODO, Payload: a}
+		it := &quest.Item{Key: a.URL, State: quest.TODO}
 		blockArticle(it, a, guardDenyingHost("deny.com"), now)
 		if it.State != quest.BLOCKED {
 			t.Errorf("State = %q, want BLOCKED", it.State)

@@ -11,7 +11,10 @@ import (
 )
 
 func TestPrepareBadJSON(t *testing.T) {
-	it := &quest.Item{Key: "https://x/a", Payload: &session.Article{URL: "https://x/a"}}
+	it := &quest.Item{Key: "https://x/a"}
+	if err := it.SetPayload(&session.Article{URL: "https://x/a"}); err != nil {
+		t.Fatal(err)
+	}
 	if _, _, err := Def("ua", "cache").Prepare(it, []byte("{not json")); err == nil {
 		t.Fatal("want JSON decode error")
 	}

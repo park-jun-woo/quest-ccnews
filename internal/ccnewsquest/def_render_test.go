@@ -12,7 +12,10 @@ import (
 )
 
 func TestRender(t *testing.T) {
-	it := &quest.Item{Key: "https://x/a", Tries: 1, Payload: &session.Article{URL: "https://x/a", Host: "x", Lang: "en"}}
+	it := &quest.Item{Key: "https://x/a", Tries: 1}
+	if err := it.SetPayload(&session.Article{URL: "https://x/a", Host: "x", Lang: "en"}); err != nil {
+		t.Fatal(err)
+	}
 	out, err := Def("ua", "cache").Render(it)
 	if err != nil {
 		t.Fatal(err)

@@ -14,9 +14,11 @@ import (
 func TestRenderEmptyReasonNotShown(t *testing.T) {
 	// Log present but tail Reason empty -> no 직전 실패 line.
 	it := &quest.Item{
-		Key:     "https://x/a",
-		Payload: &session.Article{URL: "https://x/a"},
-		Log:     []quest.Attempt{{Reason: ""}},
+		Key: "https://x/a",
+		Log: []quest.Attempt{{Reason: ""}},
+	}
+	if err := it.SetPayload(&session.Article{URL: "https://x/a"}); err != nil {
+		t.Fatal(err)
 	}
 	out, err := Def("ua", "cache").Render(it)
 	if err != nil {

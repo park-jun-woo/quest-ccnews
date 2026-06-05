@@ -26,11 +26,11 @@ func (ccnewsDef) Seed(args []string) ([]*quest.Item, error) {
 		if url == "" {
 			continue
 		}
-		items = append(items, &quest.Item{
-			Key:     url,
-			State:   quest.TODO,
-			Payload: &session.Article{URL: url},
-		})
+		it := &quest.Item{Key: url, State: quest.TODO}
+		if err := it.SetPayload(&session.Article{URL: url}); err != nil {
+			return nil, fmt.Errorf("seed: payload marshal (%s): %w", url, err)
+		}
+		items = append(items, it)
 	}
 	return items, nil
 }

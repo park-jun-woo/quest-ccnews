@@ -15,12 +15,12 @@ func TestPrepareReadBodyError(t *testing.T) {
 	// ingest.Client.ReadBody fail at os.Open, exercising Prepare's ReadBody
 	// error branch deterministically (no network, no real WARC).
 	d := Def("ua", t.TempDir())
-	it := &quest.Item{
-		Key: "https://x/a",
-		Payload: &session.Article{
-			URL:  "https://x/a",
-			WARC: &session.WARCLoc{File: "does-not-exist.warc.gz", Offset: 0},
-		},
+	it := &quest.Item{Key: "https://x/a"}
+	if err := it.SetPayload(&session.Article{
+		URL:  "https://x/a",
+		WARC: &session.WARCLoc{File: "does-not-exist.warc.gz", Offset: 0},
+	}); err != nil {
+		t.Fatal(err)
 	}
 	_, _, err := d.Prepare(it, []byte(`{"who":{"value":"Alice","anchors":["Alice"]}}`))
 	if err == nil {

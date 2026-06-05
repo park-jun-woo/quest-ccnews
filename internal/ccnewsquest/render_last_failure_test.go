@@ -14,9 +14,11 @@ import (
 func TestRenderLastFailureReason(t *testing.T) {
 	// A non-empty log tail Reason is surfaced as 직전 실패.
 	it := &quest.Item{
-		Key:     "https://x/a",
-		Payload: &session.Article{URL: "https://x/a", Host: "x", Lang: "en"},
-		Log:     []quest.Attempt{{Reason: ""}, {Reason: "anchor hallucination"}},
+		Key: "https://x/a",
+		Log: []quest.Attempt{{Reason: ""}, {Reason: "anchor hallucination"}},
+	}
+	if err := it.SetPayload(&session.Article{URL: "https://x/a", Host: "x", Lang: "en"}); err != nil {
+		t.Fatal(err)
 	}
 	out, err := Def("ua", "cache").Render(it)
 	if err != nil {
