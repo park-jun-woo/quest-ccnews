@@ -1,4 +1,4 @@
-package main
+package agentcfg
 
 // agentBodyText is the article body the candy WARC carries; the stub anchors come
 // from it (e.g. "Reporter") so the real anchor gate PASSes on a faithful event6.

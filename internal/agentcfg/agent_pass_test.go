@@ -1,7 +1,7 @@
 //ff:func feature=cli type=command control=sequence level=error
 //ff:what agent 통합 (1) 정상→PASS. 스텁이 충실한 event6 JSON을 1회 반환 → 앵커 게이트 PASS, 1회 호출로 잠금, 결과 JSONL에 원문 URL+event6(사실) 기록(E 공개안전 불변 동반 단언).
 
-package main
+package agentcfg
 
 import (
 	"os"

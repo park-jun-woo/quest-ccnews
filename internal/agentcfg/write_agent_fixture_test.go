@@ -1,6 +1,6 @@
 //ff:func feature=cli type=helper control=sequence level=error
 //ff:what writeAgentFixture(t) — 캔드 WARC(HTML 응답)를 임시 캐시에 쓰고, 그 WARC를 가리키는 TODO 기사 1건을 담은 session.json을 만들어 (sessionPath, outPath, cacheDir)을 돌려준다. agent 통합 테스트의 무네트워크 픽스처(공유 상수 agentPassHTML 사용).
-package main
+package agentcfg
 
 import (
 	"bytes"

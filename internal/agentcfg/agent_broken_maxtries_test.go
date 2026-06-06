@@ -1,7 +1,7 @@
 //ff:func feature=cli type=command control=sequence level=error
 //ff:what agent 통합 (4) 계속 깨진 출력→MaxTries DONE(루프 중단 아님). 스텁이 매번 JSON 아닌 산문을 반환 → Prepare가 retryable FAIL short verdict(event6-json)로 흡수 → 래칫이 MaxTries 소진 후 DONE 잠금, 루프는 Go 에러 없이 정상 종료(Phase015 A 핵심: 한 번의 포맷 잡음이 무인 루프를 죽이지 않음).
 
-package main
+package agentcfg
 
 import (
 	"strings"

@@ -1,7 +1,7 @@
 //ff:func feature=cli type=command control=sequence level=error
 //ff:what agent 통합 (3) 환각 앵커→FAIL 코칭 재시도→수렴. 스텁이 1회차에 원문에 없는 앵커(환각)를 반환 → required-anchor-real FAIL → 코칭 되먹임 → 2회차 충실 event6 → PASS 수렴.
 
-package main
+package agentcfg
 
 import (
 	"strings"

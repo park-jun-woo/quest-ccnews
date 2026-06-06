@@ -1,6 +1,6 @@
 //ff:func feature=cli type=helper control=sequence level=error
 //ff:what runAgent(t, sessionPath, outPath, cacheDir, backend) — 주입한 llm.Backend 스텁으로 reins agent 루프(cli.NewQuestCmd+ccnewsquest.Def)를 픽스처 위에서 구동해 합쳐진 명령 출력을 돌려준다. Execute가 Go 에러를 반환하면 테스트 실패.
-package main
+package agentcfg
 
 import (
 	"bytes"
@@ -15,10 +15,10 @@ import (
 // backend, returning the combined command output.
 func runAgent(t *testing.T, sessionPath, outPath, cacheDir string, backend llm.Backend) string {
 	t.Helper()
-	def := ccnewsquest.Def(defaultUserAgent, cacheDir)
+	def := ccnewsquest.Def(UserAgent, cacheDir)
 	opts := cli.Options{Agent: &cli.AgentOptions{
-		System:     ccnewsSystem,
-		RuleSystem: ccnewsRuleCoaching,
+		System:     System,
+		RuleSystem: RuleCoaching,
 		LLM:        backend,
 	}}
 	cmd := cli.NewQuestCmd("ccnews", def, opts)

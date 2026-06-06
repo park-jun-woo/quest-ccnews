@@ -1,7 +1,7 @@
 //ff:func feature=cli type=command control=sequence level=error
 //ff:what agent 통합 (2) 펜스 두른 JSON→구제 PASS. 스텁이 ```json 펜스로 감싼 충실한 event6를 반환해도 Prepare 관용 디코드(Phase015 A)로 구제되어 1회 호출로 PASS(A 회귀 가드).
 
-package main
+package agentcfg
 
 import (
 	"strings"
