@@ -50,10 +50,8 @@ func (d ccnewsDef) Render(s *quest.Session, it *quest.Item) (string, error) {
 	// in-process agent loop (MetaAgentLoop set) the agent appends its own renderVerdict
 	// feedback, so emitting the tail here would double-expose the same reason.
 	if _, agentLoop := s.GetMeta(quest.MetaAgentLoop); !agentLoop {
-		if n := len(it.Log); n > 0 {
-			if r := it.Log[n-1].Reason; r != "" {
-				fmt.Fprintf(&b, "직전 실패: %s\n", r)
-			}
+		if r := lastFailureReason(it); r != "" {
+			fmt.Fprintf(&b, "직전 실패: %s\n", r)
 		}
 	}
 	fmt.Fprintln(&b)
@@ -79,8 +77,16 @@ func (d ccnewsDef) Render(s *quest.Session, it *quest.Item) (string, error) {
 
 	fmt.Fprintln(&b, "=== 제출 ===")
 	fmt.Fprintf(&b, "  ccnews submit --key %q --in -\n", url)
-	fmt.Fprintln(&b, "  event6 JSON 예: {\"who\":{\"value\":\"...\",\"anchors\":[\"...\"]},"+
-		"\"when\":{...},\"what\":{...},\"where\":null,\"how\":null,\"why\":null}")
+	// 1-shot example with who/what/when filled from a fictional article so the small
+	// model has the exact output shape nailed down (Phase015 B). Imagine the article
+	// reads "On March 3, 2025, Acme Corp announced a recall." — anchors are verbatim
+	// surface tokens; values are English/normalized; absent fields are null.
+	fmt.Fprintln(&b, "  event6 JSON 예 (가짜 기사 \"On March 3, 2025, Acme Corp "+
+		"announced a recall.\" 기준):")
+	fmt.Fprintln(&b, "  {\"who\":{\"value\":\"Acme Corp\",\"anchors\":[\"Acme Corp\"]},"+
+		"\"what\":{\"value\":\"announced a recall\",\"anchors\":[\"announced a recall\"]},"+
+		"\"when\":{\"value\":\"2025-03-03\",\"anchors\":[\"March 3, 2025\"]},"+
+		"\"where\":null,\"how\":null,\"why\":null}")
 
 	return b.String(), nil
 }

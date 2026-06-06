@@ -3,7 +3,6 @@
 package ccnewsquest
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/park-jun-woo/quest-ccnews/internal/session"
@@ -28,9 +27,24 @@ import (
 //     checkField (Phase013 D), the submitted event6 is attached, SetPayload writes
 //     Extracted+Event6 back, and Prepare returns the anchor-evaluation Context.
 func (d ccnewsDef) Prepare(s *quest.Session, it *quest.Item, raw []byte) (gate.Context, *quest.Verdict, error) {
-	var ev session.Event6
-	if err := json.Unmarshal(raw, &ev); err != nil {
-		return gate.Context{}, nil, err
+	// Lenient decode: shed any markdown fence and extract the first balanced JSON
+	// object before Unmarshal so a small local model's fences/prose are tolerated. A
+	// genuinely undecodable submission is a retryable FAIL short verdict (RootCause
+	// "event6-json" so the rule coaching fires), NOT a Go error — a Go error here would
+	// propagate up and abort the whole unattended agent loop. Real IO errors below
+	// (readArticleBody, payload decode) stay as errors to separate ops faults from noise.
+	ev, ok := decodeEvent6(raw)
+	if !ok {
+		return gate.Context{}, &quest.Verdict{
+			Outcome:   quest.OutFail,
+			RootCause: "event6-json",
+			Facts: []quest.Fact{{
+				Rule:     "event6-json",
+				Where:    "submission",
+				Expected: "single event6 JSON object",
+				Actual:   firstN(raw, 80),
+			}},
+		}, nil
 	}
 
 	var a session.Article

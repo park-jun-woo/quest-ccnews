@@ -34,6 +34,7 @@ const ccnewsSystem = "You extract the six W's (who/what/when/where/how/why) from
 // ccnewsRuleCoaching maps each anchor-gate rule ID (ccnewsquest rules.go) to extra
 // system guidance applied on the next retry when the previous attempt FAILed on it.
 var ccnewsRuleCoaching = map[string]string{
+	"event6-json": "Output exactly one JSON object and nothing else — no fences, no commentary.",
 	"required-present": "The previous attempt left a required field (who/what) empty. " +
 		"Provide a non-empty value AND at least one anchor for both who and what.",
 	"required-anchor-valid": "A required field had a value but no anchors, or malformed anchors. " +
