@@ -14,7 +14,7 @@ func TestPrepareNonArticlePayload(t *testing.T) {
 	// A payload that cannot decode into session.Article (a bare JSON string)
 	// makes DecodePayload fail, which Prepare surfaces as an error.
 	it := &quest.Item{Key: "https://x/a", Payload: json.RawMessage(`"not an article"`)}
-	if _, _, err := Def("ua", "cache").Prepare(it, []byte(`{}`)); err == nil {
+	if _, _, err := Def("ua", "cache").Prepare(quest.New(), it, []byte(`{}`)); err == nil {
 		t.Fatal("want error for payload that does not decode into *session.Article")
 	}
 }

@@ -1,5 +1,5 @@
 //ff:func feature=ingestion type=helper control=sequence
-//ff:what bridge 단위테스트(robots 비관여 경로). 새 기사를 URL키·payload·TODO Item으로 시드하고 처리 뒤 scratch.Articles를 비우는지, nil·빈URL·이미시드·배치내중복을 건너뛰는지, 커서/hosts/UA를 Meta로 보존하는지 검증한다. robots 거부/호스트 가드 경로는 TestBridgeRobots에서 검증한다.
+//ff:what bridge 단위테스트(Phase013 A: robots 시드-fetch 없음). 새 기사를 URL키·payload·TODO Item으로 시드하고 처리 뒤 scratch.Articles를 비우는지, nil·빈URL·이미시드·배치내중복을 건너뛰는지, 커서/hosts/UA/cache_dir를 Meta로 보존하는지 검증한다. robots 판정은 pick-time(Prepare)로 이동했으므로 시드는 모든 기사를 TODO로 둔다.
 
 package runcmd
 
@@ -11,15 +11,13 @@ import (
 )
 
 func TestBridge(t *testing.T) {
-	const now = "2026-06-05T00:00:00Z"
-
 	t.Run("seeds new articles as TODO with URL key and payload", func(t *testing.T) {
 		scratch := session.New("ua", "cc-news")
 		a := &session.Article{URL: "https://ex.com/a", Host: "ex.com"}
 		scratch.Articles = []*session.Article{a}
 		s := quest.New()
 
-		n := bridge(scratch, s, nil, now)
+		n := bridge(scratch, s, "")
 
 		if n != 1 {
 			t.Fatalf("seeded = %d, want 1", n)
@@ -59,7 +57,7 @@ func TestBridge(t *testing.T) {
 			{URL: "https://ex.com/new", Host: "ex.com"},
 		}
 
-		n := bridge(scratch, s, nil, now)
+		n := bridge(scratch, s, "")
 
 		if n != 1 {
 			t.Fatalf("seeded = %d, want 1 (only the new URL)", n)
@@ -72,13 +70,13 @@ func TestBridge(t *testing.T) {
 		}
 	})
 
-	t.Run("preserves cursor/hosts/UA into Meta", func(t *testing.T) {
+	t.Run("preserves cursor/hosts/UA/cache_dir into Meta", func(t *testing.T) {
 		scratch := session.New("crawl-ua", "cc-news")
 		scratch.Ingestion.ProcessedWarcs = []string{"w1.warc.gz"}
 		scratch.Hosts = map[string]*session.Host{"ex.com": {MediaName: "Ex"}}
 		s := quest.New()
 
-		bridge(scratch, s, nil, now)
+		bridge(scratch, s, "/abs/warc-cache")
 
 		if v, ok := s.GetMeta(metaUserAgent); !ok || v.(string) != "crawl-ua" {
 			t.Errorf("Meta[user_agent] = %v, ok=%v", v, ok)
@@ -90,6 +88,9 @@ func TestBridge(t *testing.T) {
 		hosts, ok := s.GetMeta(metaHosts)
 		if !ok || hosts.(map[string]*session.Host)["ex.com"] == nil {
 			t.Errorf("Meta[hosts] = %v, ok=%v", hosts, ok)
+		}
+		if v, ok := s.GetMeta(metaCacheDir); !ok || v.(string) != "/abs/warc-cache" {
+			t.Errorf("Meta[cache_dir] = %v, ok=%v, want /abs/warc-cache", v, ok)
 		}
 	})
 }

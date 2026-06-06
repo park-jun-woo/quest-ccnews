@@ -1,6 +1,6 @@
 //ff:type feature=ingestion type=model
 //ff:func feature=ingestion type=command control=sequence
-//ff:what options는 run 명령의 해석된 설정·플래그 타깃을 묶는다. New는 reins cli에 부착할 `run` ExtraCommand를 만든다(G1). 투트랙 WARC 인제스천 루프를 reins 세션 위에서 돈다. userAgent·cacheDir는 ccnewsquest.Def와 같은 값을 받아 run/세션 Meta와 일관되게 한다. --track/--max-warcs/--cache-dir 플래그를 달고, 세션 경로는 root의 persistent --session을 상속해 읽는다.
+//ff:what options는 run 명령의 해석된 설정·플래그 타깃을 묶는다. New는 reins cli에 부착할 `run` ExtraCommand를 만든다(G1). 투트랙 WARC 인제스천 루프를 reins 세션 위에서 돈다. userAgent·cacheDir는 ccnewsquest.Def와 같은 값을 받아 run/세션 Meta와 일관되게 한다. --track/--max-warcs/--cache-dir 플래그를 달고(robots 플래그는 Phase013 A에서 제거 — robots는 항상 pick-time 평가), 세션 경로는 root의 persistent --session을 상속해 읽는다.
 
 package runcmd
 
@@ -12,7 +12,6 @@ type options struct {
 	cacheDir  string
 	track     string
 	maxWarcs  int
-	robots    bool           // when false, skip the eager per-host robots.txt fetch in bridge
 	cmd       *cobra.Command // set in New so sessionPath() can read the inherited flag
 }
 
@@ -41,14 +40,13 @@ func New(userAgent, cacheDir string) *cobra.Command {
   --track backward  과거로 내려가며 2016-08(exhausted)까지
   --track both      둘 다(기본)
 
-커서·processed·호스트 robots 캐시는 세션 Meta에 보존되어 다음 run에 이어진다.
-robots 거부 기사는 BLOCKED로 직접 시드한다.`,
+커서·processed·호스트 robots 캐시·WARC 캐시 경로는 세션 Meta에 보존되어 다음 run에 이어진다.
+robots는 시드 시 fetch하지 않고 기사 제출(submit) 시점에 호스트당 1회 평가해 거부 기사를 BLOCKED로 잠근다.`,
 		RunE: o.run,
 	}
 	o.cmd = cmd
 	cmd.Flags().StringVar(&o.track, "track", "both", "처리할 트랙: forward|backward|both")
 	cmd.Flags().IntVar(&o.maxWarcs, "max-warcs", 0, "처리할 WARC 최대 개수(0=무제한)")
 	cmd.Flags().StringVar(&o.cacheDir, "cache-dir", cacheDir, "다운로드 WARC 캐시 디렉터리")
-	cmd.Flags().BoolVar(&o.robots, "robots", true, "브리지 시 호스트별 robots.txt를 1회 fetch해 거부 기사를 BLOCKED로 시드(false면 생략하고 모두 TODO 시드 — 대량 인제스천 시 1892개 호스트 라이브 fetch 폭주 회피)")
 	return cmd
 }

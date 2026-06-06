@@ -22,7 +22,7 @@ func TestPrepareReadBodyError(t *testing.T) {
 	}); err != nil {
 		t.Fatal(err)
 	}
-	_, _, err := d.Prepare(it, []byte(`{"who":{"value":"Alice","anchors":["Alice"]}}`))
+	_, _, err := d.Prepare(quest.New(), it, []byte(`{"who":{"value":"Alice","anchors":["Alice"]}}`))
 	if err == nil {
 		t.Fatal("want error when ReadBody cannot open the WARC file")
 	}

@@ -25,7 +25,7 @@ func TestPrepareSetPayloadSkip(t *testing.T) {
 	}
 
 	raw := []byte(`{"who":{"value":"Reporter","anchors":["Reporter"]}}`)
-	_, v, err := d.Prepare(it, raw)
+	_, v, err := d.Prepare(quest.New(), it, raw)
 	if err != nil {
 		t.Fatalf("Prepare: %v", err)
 	}

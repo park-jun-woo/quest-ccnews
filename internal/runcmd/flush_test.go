@@ -24,7 +24,7 @@ func TestFlush(t *testing.T) {
 		s := quest.New()
 		var buf bytes.Buffer
 
-		if err := o.flush(scratch, s, nil, "2026-06-05T00:00:00Z", &buf); err != nil {
+		if err := o.flush(scratch, s, "", &buf); err != nil {
 			t.Fatalf("flush() err = %v", err)
 		}
 		if !strings.Contains(buf.String(), "seed: +1 items") {
@@ -49,7 +49,7 @@ func TestFlush(t *testing.T) {
 		s := quest.New()
 		var buf bytes.Buffer
 
-		if err := o.flush(scratch, s, nil, "now", &buf); err != nil {
+		if err := o.flush(scratch, s, "", &buf); err != nil {
 			t.Fatalf("flush() err = %v", err)
 		}
 		if buf.Len() != 0 {
@@ -64,7 +64,7 @@ func TestFlush(t *testing.T) {
 		s := quest.New()
 		var buf bytes.Buffer
 
-		if err := o.flush(scratch, s, nil, "now", &buf); err == nil {
+		if err := o.flush(scratch, s, "", &buf); err == nil {
 			t.Errorf("flush() err = nil, want Save error")
 		}
 	})

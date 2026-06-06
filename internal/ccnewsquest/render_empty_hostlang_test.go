@@ -17,7 +17,7 @@ func TestRenderEmptyHostLang(t *testing.T) {
 	if err := it.SetPayload(&session.Article{URL: "https://x/a"}); err != nil {
 		t.Fatal(err)
 	}
-	out, err := Def("ua", "cache").Render(it)
+	out, err := Def("ua", "cache").Render(quest.New(), it)
 	if err != nil {
 		t.Fatal(err)
 	}

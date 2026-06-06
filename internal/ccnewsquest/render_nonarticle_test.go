@@ -16,7 +16,7 @@ func TestRenderNonArticlePayload(t *testing.T) {
 	// host/lang stay empty (DecodePayload error is swallowed) and render still
 	// succeeds with the URL present.
 	it := &quest.Item{Key: "https://x/a", Payload: json.RawMessage(`"not an article"`)}
-	out, err := Def("ua", "cache").Render(it)
+	out, err := Def("ua", "cache").Render(quest.New(), it)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -1,17 +1,20 @@
 //ff:func feature=robots type=helper control=sequence
-//ff:what * 그룹이 여러 개일 때 SelectGroup이 첫 * 그룹을 유지하는지 검증한다.
+//ff:what * 그룹이 여러 개일 때 SelectGroup이 둘 다 병합해 모든 Rules를 포함하는지 검증한다.
 
 package robots
 
 import "testing"
 
-func TestSelectGroupFirstStarKept(t *testing.T) {
+func TestSelectGroupStarMerged(t *testing.T) {
 	rs := &Ruleset{Groups: []Group{
 		{Agents: []string{"*"}, Rules: []Rule{{Pattern: "/first"}}},
 		{Agents: []string{"*"}, Rules: []Rule{{Pattern: "/second"}}},
 	}}
 	g := SelectGroup(rs, "nobody")
-	if g == nil || len(g.Rules) == 0 || g.Rules[0].Pattern != "/first" {
-		t.Errorf("expected first star group, got %+v", g)
+	if g == nil || len(g.Rules) != 2 {
+		t.Fatalf("expected both star groups merged, got %+v", g)
+	}
+	if g.Rules[0].Pattern != "/first" || g.Rules[1].Pattern != "/second" {
+		t.Errorf("expected /first then /second in declaration order, got %+v", g.Rules)
 	}
 }

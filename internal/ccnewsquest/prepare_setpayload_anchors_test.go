@@ -31,7 +31,7 @@ func TestPrepareSetPayloadAnchorsRoundTrip(t *testing.T) {
 		`"what":{"value":"framework agreement on nuclear program","anchors":["framework agreement","nuclear program"]}` +
 		`}`)
 
-	if _, v, err := d.Prepare(it, raw); err != nil || v != nil {
+	if _, v, err := d.Prepare(quest.New(), it, raw); err != nil || v != nil {
 		t.Fatalf("Prepare: v=%+v err=%v", v, err)
 	}
 
