@@ -20,10 +20,39 @@ const defaultUserAgent = "parkjunwoo-quest/0.1 (+https://www.parkjunwoo.com)"
 // consistent (Phase013).
 const defaultCacheDir = "warc-cache"
 
+// ccnewsSystem is the global system prompt for the agent loop: it states that the
+// model is the generator and a deterministic anchor gate is the judge — anchors must
+// be verbatim original-text tokens, values are English (and not judged).
+const ccnewsSystem = "You extract the six W's (who/what/when/where/how/why) from a news " +
+	"article and output ONLY a single event6 JSON object — no prose, no markdown. " +
+	"Each field has a 'value' (English; dates ISO, numbers normalized) and 'anchors' " +
+	"(an array of tokens that appear VERBATIM in the original article text). " +
+	"who and what are required; when/where/how/why are optional (null when absent). " +
+	"A deterministic gate checks only that every anchor is an exact substring of the " +
+	"original body. Never invent an anchor that is not literally in the text."
+
+// ccnewsRuleCoaching maps each anchor-gate rule ID (ccnewsquest rules.go) to extra
+// system guidance applied on the next retry when the previous attempt FAILed on it.
+var ccnewsRuleCoaching = map[string]string{
+	"required-present": "The previous attempt left a required field (who/what) empty. " +
+		"Provide a non-empty value AND at least one anchor for both who and what.",
+	"required-anchor-valid": "A required field had a value but no anchors, or malformed anchors. " +
+		"Give each required field at least one anchor that is a verbatim substring of the article.",
+	"required-anchor-real": "A required field's anchor was NOT found in the article (hallucination). " +
+		"Use only tokens copied exactly from the original body as anchors.",
+	"optional-present": "An optional field had anchors but no value. Either give it a value or set it to null.",
+	"optional-anchor-real": "An optional field's anchor was NOT found in the article (hallucination). " +
+		"Drop that field to null, or use only verbatim tokens as anchors.",
+}
+
 func main() {
 	root := cli.NewQuestCmd("ccnews", ccnewsquest.Def(defaultUserAgent, defaultCacheDir), cli.Options{
 		Version:       "0.3",
 		ExtraCommands: []*cobra.Command{runcmd.New(defaultUserAgent, defaultCacheDir)},
+		Agent: &cli.AgentOptions{
+			System:     ccnewsSystem,
+			RuleSystem: ccnewsRuleCoaching,
+		},
 	})
 	if err := root.Execute(); err != nil {
 		os.Exit(1)

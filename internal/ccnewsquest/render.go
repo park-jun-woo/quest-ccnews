@@ -46,9 +46,14 @@ func (d ccnewsDef) Render(s *quest.Session, it *quest.Item) (string, error) {
 	}
 	fmt.Fprintf(&b, "시도: %d/%d\n", it.Tries, session.MaxTries)
 
-	if n := len(it.Log); n > 0 {
-		if r := it.Log[n-1].Reason; r != "" {
-			fmt.Fprintf(&b, "직전 실패: %s\n", r)
+	// Show the last failure reason only in the manual next/submit flow. Under the
+	// in-process agent loop (MetaAgentLoop set) the agent appends its own renderVerdict
+	// feedback, so emitting the tail here would double-expose the same reason.
+	if _, agentLoop := s.GetMeta(quest.MetaAgentLoop); !agentLoop {
+		if n := len(it.Log); n > 0 {
+			if r := it.Log[n-1].Reason; r != "" {
+				fmt.Fprintf(&b, "직전 실패: %s\n", r)
+			}
 		}
 	}
 	fmt.Fprintln(&b)
